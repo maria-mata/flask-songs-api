@@ -27,9 +27,10 @@ def resource(song_id):
         result = edit_song(song_id, data['artist'], data['title'], data['rating'])
         return jsonify(result)
     elif request.method == 'DELETE':
-        pass # handle DELETE request
+        result = delete_song(song_id)
+        return jsonify(result)
 
-# Helper functions
+# ----- HELPER FUNCTIONS -----
 def add_song(artist, title, rating):
     try:
         with sqlite3.connect('songs.db') as connection:
@@ -64,6 +65,16 @@ def edit_song(song_id, artist, title, rating):
     except:
         result = {'status': 0, 'message': 'Error'}
     return result
+
+def delete_song(song_id):
+    try:
+        with sqlite3.connect('songs.db') as connection:
+            connection.execute("DELETE FROM songs WHERE ID = ?;", (song_id,))
+            result = {'status': 1, 'message': 'Song deleted'}
+    except:
+        result = {'status': 0, 'message': 'Error'}
+    return result
+
 # Below states that this source file is our main program
 # Any files imported from other modules will have their name set to their module name
 if __name__ == '__main__':
